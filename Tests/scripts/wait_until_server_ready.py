@@ -1,4 +1,5 @@
 """Wait for server to be ready for tests"""
+import re
 import sys
 import json
 import ast
@@ -24,25 +25,36 @@ SETUP_TIMEOUT = 30 * 60
 SLEEP_TIME = 45
 
 
-def get_username_password():
+def get_arguments():
     parser = argparse.ArgumentParser(description='Utility for batch action on incidents')
     parser.add_argument('-c', '--confPath', help='The path for the secret conf file', required=True)
     parser.add_argument('-v', '--contentVersion', help='Content version to install', required=True)
     parser.add_argument("--non-ami", help="Do NOT run with AMI setting", action='store_true')
+    parser.add_argument("-b", "--branchName", help="Current branch name", required=False)
+    parser.add_argument("-cic", "--checkInstalledContent", help="If branch is a release branch, this will become active",
+                        action='store_true', required=False)
     options = parser.parse_args()
     conf_path = options.confPath
 
     with open(conf_path, 'r') as conf_file:
         conf = json.load(conf_file)
 
-    if options.non_ami:
-        return conf['temp_apikey'], options.contentVersion
+    if options.branchName:
+        is_release_branch = bool(re.match(r'(?:[0-9]{2}\.[0-9]\.[0-9])\Z', options.branchName))
+        print_color("Running in a release branch", LOG_COLORS.YELLOW)
+    else:
+        is_release_branch = False
 
-    return conf['temp_apikey'], options.contentVersion
+    if is_release_branch and not options.checkInstalledContent:
+        check_installed_content = False
+    else:
+        check_installed_content = True
+
+    return conf['temp_apikey'], options.contentVersion, check_installed_content
 
 
 def is_correct_content_installed(ips, content_version, api_key):
-    # type: (AnyStr, List[List], AnyStr) -> bool
+    # type: (List[str], List[List], AnyStr) -> bool
     """ Checks if specific content version is installed on server list
 
     Args:
@@ -101,7 +113,7 @@ def exit_if_timed_out(loop_start_time, current_time):
 
 
 def main():
-    api_key, content_version = get_username_password()
+    api_key, content_version, check_installed_content = get_arguments()
     ready_ami_list = []
     with open('./Tests/instance_ips.txt', 'r') as instance_file:
         instance_ips = instance_file.readlines()
@@ -134,9 +146,9 @@ def main():
             last_update_time = current_time
         if len(instance_ips) > len(ready_ami_list):
             sleep(1)
-
-    if not is_correct_content_installed(instance_ips, content_version, api_key=api_key):
-        sys.exit(1)
+    if check_installed_content:
+        if not is_correct_content_installed(instance_ips, content_version, api_key=api_key):
+            sys.exit(1)
 
 
 if __name__ == "__main__":
