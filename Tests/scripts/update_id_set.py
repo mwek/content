@@ -806,15 +806,15 @@ def update_id_set():
 
     print('========================')
     # get the current branch name.
-    current_branch = run_command(f"git symbolic-ref --short HEAD")
-    print(f'current_branch\n\n:{current_branch}')
+    current_branch = run_command("git rev-parse --abbrev-ref HEAD")
+    print("current_branch\n\n:{}".format(current_branch))
     # This will return a list of all files that changed up until the last commit (not including any changes
     # which were made but not yet committed).
-    changes_from_last_commit_vs_master = run_command(f"git diff origin/master...{current_branch}")
-    print(f'changes_from_last_commit_vs_master\n\n:{changes_from_last_commit_vs_master}')
+    changes_from_last_commit_vs_master = run_command("git diff origin/master...{}".format(current_branch))
+    print("changes_from_last_commit_vs_master\n\n:{}".format(changes_from_last_commit_vs_master))
     # This will check if any changes were made to the files in the package (pkg_dir) but are yet to be committed.
-    changes_since_last_commit = run_command(f"git diff --name-only -- Integrations/AbuseDB")
-    print(f'changes_since_last_commit\n\n:{changes_since_last_commit}')
+    changes_since_last_commit = run_command("git diff --name-only -- Integrations/AbuseDB")
+    print("changes_since_last_commit\n\n:{}".format(changes_since_last_commit))
     print('========================')
 
     branches = run_command("git branch")
