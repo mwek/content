@@ -623,7 +623,7 @@ def get_general_paths(path):
     return files
 
 
-def re_create_id_set(id_set_path="./Tests/id_set.json", objects_to_create=None):
+def re_create_id_set(id_set_path="/Users/adaud/Downloads/id_set.json", objects_to_create=None):
     if objects_to_create is None:
         objects_to_create = ['Integrations', 'Scripts', 'Playbooks', 'TestPlaybooks', 'Classifiers',
                              'Dashboards', 'IncidentFields', 'IndicatorFields', 'Layouts', 'Reports', 'Widgets']
@@ -806,7 +806,7 @@ def update_id_set():
 
     print('========================')
     # get the current branch name.
-    current_branch = run_command(f"git rev-parse --abbrev-ref HEAD")
+    current_branch = run_command(f"git symbolic-ref --short HEAD")
     print(f'current_branch\n\n:{current_branch}')
     # This will return a list of all files that changed up until the last commit (not including any changes
     # which were made but not yet committed).
@@ -816,7 +816,6 @@ def update_id_set():
     changes_since_last_commit = run_command(f"git diff --name-only -- Integrations/AbuseDB")
     print(f'changes_since_last_commit\n\n:{changes_since_last_commit}')
     print('========================')
-
 
     branches = run_command("git branch")
     branch_name_reg = re.search(r"\* (.*)", branches)
@@ -938,7 +937,7 @@ if __name__ == '__main__':
         re_create_id_set()
 
     else:
-        if os.path.isfile('./Tests/id_set.json'):
+        if os.path.isfile('/Users/adaud/Downloads/id_set.json'):
             print("Updating the id_set.json")
             update_id_set()
         else:
