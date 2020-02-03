@@ -291,14 +291,12 @@ jobs:
             fi
             if ./Tests/scripts/is_ami.sh ;
               then
-
                 python ./Tests/scripts/run_content_installation.py
-                python ./Tests/scripts/wait_until_server_ready.py -c $(cat secret_conf_path) -v $CONTENT_VERSION -b $CIRCLE_BRANCH -cic
-
               else
                 ./Tests/lastest_server_build_scripts/run_installer_on_instance.sh
-                python ./Tests/scripts/wait_until_server_ready.py -c $(cat secret_conf_path) -v $CONTENT_VERSION --non-ami -b $CIRCLE_BRANCH -cic
             fi
+
+            python ./Tests/scripts/wait_until_server_ready.py -c $(cat secret_conf_path) -v $CONTENT_VERSION -b 20.1.0 -cic
       - run:
           name: Run Tests - Latest GA
           shell: /bin/bash
