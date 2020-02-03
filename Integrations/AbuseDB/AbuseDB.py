@@ -26,6 +26,7 @@ BLACKLIST_CMD = 'blacklist'
 ANALYSIS_TITLE = "AbuseIPDB Analysis"
 BLACKLIST_TITLE = "AbuseIPDB Blacklist"
 REPORT_SUCCESS = "IP address reported successfully."
+TETS_TEST = "bla bla"
 
 HEADERS = {
     'Key': API_KEY,
